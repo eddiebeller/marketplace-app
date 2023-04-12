@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 
 type SellAnItem = {
   name: string;
   description: string;
-  price: number;
+  price: string;
 };
 
 const SellAnItem: NextPage = () => {
   const createItem = api.item.create.useMutation();
+  const router = useRouter();
 
   const {
     register,
@@ -21,7 +23,11 @@ const SellAnItem: NextPage = () => {
   } = useForm();
 
   const onSubmit = (formData: SellAnItem) => {
-    createItem.mutateAsync(formData);
+    createItem
+      .mutateAsync({ ...formData, price: parseFloat(formData.price) })
+      .then(() => {
+        router.push("/");
+      });
   };
   return (
     <>
