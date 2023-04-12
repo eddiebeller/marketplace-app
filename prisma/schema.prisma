@@ -17,5 +17,5 @@ model Item {
     updatedAt   DateTime @updatedAt
     name        String
     description String
-    price       String
+    price       Float
 }
