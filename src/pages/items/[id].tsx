@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 const ItemView: NextPage = () => {
   const router = useRouter();
-  const info = api.item.get.useQuery(
+  const item = api.item.get.useQuery(
     {
       itemId: router.query.id as string,
     },
@@ -13,6 +13,13 @@ const ItemView: NextPage = () => {
       enabled: !!router.query.id,
     }
   );
+
+  const itemData = item.data;
+
+  if (!itemData) {
+    return;
+  }
+
   return (
     <>
       <Head>
@@ -21,9 +28,10 @@ const ItemView: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col  gap-5 bg-gradient-to-b from-[#2e026d] to-[#15162c] p-4 text-white">
-        <h2 className="mt-2 text-4xl">Items for sale</h2>
-        <div className="container grid grid-cols-3 gap-5 ">
-          <h1>This is Item view page</h1>
+        <h2 className="mt-2 text-4xl">{itemData.name}</h2>
+        <div className="container">
+          <p>{itemData.description}</p>
+          <p>{itemData.price}</p>
         </div>
       </main>
     </>
