@@ -1,9 +1,19 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { type NextPage } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { useUser } from "@clerk/nextjs";
+import { useForm } from "react-hook-form";
 
 const ItemView: NextPage = () => {
+  const user = useUser();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   const router = useRouter();
   const item = api.item.get.useQuery(
     {
@@ -33,6 +43,49 @@ const ItemView: NextPage = () => {
           <p>{itemData.description}</p>
           <p>{itemData.price}</p>
         </div>
+        {user.isSignedIn && (
+          <>
+            <form
+              onSubmit={handleSubmit((formData) => {
+                console.log(formData);
+              })}
+              className="flex w-1/4 flex-col gap-5"
+            >
+              <div>
+                <label
+                  htmlFor="name"
+                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Message
+                </label>
+                <input
+                  id="name"
+                  {...register("name", { required: true })}
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="message"
+                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  {...register("message", { required: true })}
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                />
+              </div>
+              <button
+                type="submit"
+                className="mb-2 mr-2 cursor-pointer rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Send Message
+              </button>
+            </form>
+          </>
+        )}
       </main>
     </>
   );

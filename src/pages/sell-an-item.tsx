@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { type NextPage } from "next";
 import Head from "next/head";
@@ -37,7 +38,6 @@ const SellAnItem: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        {/* <p className="text-2xl text-white">this is sell an item page</p> */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex w-1/2 flex-col gap-5"
