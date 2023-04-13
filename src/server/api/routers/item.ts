@@ -1,11 +1,28 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const itemRouter = createTRPCRouter({
-  itemsList: publicProcedure.query(({ctx}) => {
+  list: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.item.findMany();
   }),
+  get: publicProcedure
+    .input(
+      z.object({
+        itemId: z.string(),
+      })
+    )
+    .query(({ input, ctx }) => {
+      return ctx.prisma.item.findUnique({
+        where: {
+          id: input.itemId,
+        },
+      });
+    }),
   create: protectedProcedure
     .input(
       z.object({ name: z.string(), description: z.string(), price: z.number() })
