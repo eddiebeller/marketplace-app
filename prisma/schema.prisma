@@ -23,10 +23,9 @@ model Item {
 
 model Message {
     id           String @id @default(cuid())
-    toUser       String
     fromUser     String
     fromUserName String
-    toUserName   String
     itemId       String
+    message      String
     item         Item   @relation(fields: [itemId], references: [id])
 }

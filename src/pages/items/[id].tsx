@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { type NextPage } from "next";
 import Head from "next/head";
@@ -8,12 +9,7 @@ import { useForm } from "react-hook-form";
 
 const ItemView: NextPage = () => {
   const user = useUser();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, reset } = useForm<{ message: string }>();
   const router = useRouter();
   const item = api.item.get.useQuery(
     {
@@ -23,6 +19,8 @@ const ItemView: NextPage = () => {
       enabled: !!router.query.id,
     }
   );
+
+  const sendMessage = api.item.sendMessage.useMutation();
 
   const itemData = item.data;
 
@@ -47,23 +45,15 @@ const ItemView: NextPage = () => {
           <>
             <form
               onSubmit={handleSubmit((formData) => {
-                console.log(formData);
+                sendMessage
+                  .mutateAsync({
+                    message: formData.message,
+                    itemId: itemData.id,
+                  })
+                  .then(() => reset());
               })}
               className="flex w-1/4 flex-col gap-5"
             >
-              <div>
-                <label
-                  htmlFor="name"
-                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Message
-                </label>
-                <input
-                  id="name"
-                  {...register("name", { required: true })}
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                />
-              </div>
               <div>
                 <label
                   htmlFor="message"
